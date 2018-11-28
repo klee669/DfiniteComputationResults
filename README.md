@@ -13,7 +13,7 @@
 
 type the command line
 ```
-~/Downloads/SageMath/sage exampleForKrawczykTest.sage
+~/Downloads/SageMath/sage expExample.sage
 ```
 to execute the scripts
 
@@ -24,7 +24,7 @@ to execute the scripts
 
 When the sage is running, load the script. For example
 ```
-load("expExample")
+load("expExample.sage")
 ```
 
 
