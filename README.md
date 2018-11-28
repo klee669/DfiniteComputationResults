@@ -3,8 +3,6 @@
 * Install sage:
   * 8.2 version (released on 2018-05-05) is needed. (http://www.sagemath.org/)
 
-* Add SageMath directory to $PATH
-
 * Install ore_algebra: follow the instructions in http://www.kauers.de/software.html
 
 ### How to Run Codes ###
