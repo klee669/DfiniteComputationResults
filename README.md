@@ -1,7 +1,7 @@
 ### Software Requirements ###
 
 * Install sage:
-  * 8.2 version (released on 2018-05-05) is needed.
+  * 8.2 version (released on 2018-05-05) is needed. (http://www.sagemath.org/)
 
 * Add SageMath directory to $PATH
 
