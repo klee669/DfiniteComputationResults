@@ -26,7 +26,7 @@ load("D-finite-core.sage")
 * Instructions for codes and functions are available in 'D-finite-core.sage' file. Users can construct their examples and test them.
 
 
-### How to Example Scripts ###
+### How to Run Example Scripts ###
 
 * go to 'code/examples' folder.
 
