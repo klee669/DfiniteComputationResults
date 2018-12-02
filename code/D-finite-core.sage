@@ -2,12 +2,12 @@
 ########## Description ###########
 # SAGE functions for certifying square system with D-finite functions.
 # This file consists of 3 parts, which are
-# 1. functions for D-finite functions.
+# 1. functions about differential equations satisfied by D-finite functions.
 # 2. functions for Krawczyk method.
 # 3. functions for alpha theory.
 
 
-########## Setting ##########
+########## Problem Setting ##########
 # Consider the square system 'F' with n+m variables. The first n equations should be a polynomial of n+m varibles, and the last m equations should be a x_{n+i}- g(x_s(i)) where g is a D-finite function and s(i) is a number between 1 to n+i-1.
 
 
@@ -44,6 +44,7 @@ def iniForDeri(expression, ini, iniAt):
 
         -  ``expression`` - An element in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
         -  ``ini`` - A list of numbers
+        -  ``iniAt`` - A point (number) where 'ini' is defined at
 
     OUTPUT: A list of numbers
 
@@ -52,7 +53,7 @@ def iniForDeri(expression, ini, iniAt):
         sage: import math
         sage: from ore_algebra import OreAlgebra
         sage: Pols.<x> = PolynomialRing(QQ) ; Dops.<Dx> =  OreAlgebra(Pols)
-        sage: iniForDeri(Dx^2 + 2*x*Dx, [0,2/sqrt(pi)])
+        sage: iniForDeri(Dx^2 + 2*x*Dx, [0,2/sqrt(pi)],0)
         [2/sqrt(pi), 0]  ### an initial condition for 'Dx^2 + 2*x*Dx + 2'.
 
     AUTHORS:
@@ -358,6 +359,7 @@ def evaluateSystemPoint(sys, varlist, explist, inilist, point, iniAt):
         -  ``explist`` : A list of elements in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
         -  ``inilist`` : A list of lists (initial values)
         -  ``point`` : A vector (or list) of numbers
+        -  ``iniAt`` - A point (number) where initial values are defined at
 
     OUTPUT: A list of numbers
 
@@ -373,7 +375,8 @@ def evaluateSystemPoint(sys, varlist, explist, inilist, point, iniAt):
         sage: inilist = [ini, ini]
         sage: varlist = [x1, x2, [x3, x1], [x4, x2]]
         sage: point = (4/10, 2/10, 4/10, 10/10)
-        sage: evaluateSystemPoint(sys, varlist, explist, inilist, point)
+        sage: iniAt = 0
+        sage: evaluateSystemPoint(sys, varlist, explist, inilist, point, iniAt)
         [ -0.10000000000   -3.8000000000 -0.028392355047   0.77729741079]
 
     AUTHORS:
@@ -448,6 +451,7 @@ def evaluateSystemAtMid(sys, varlist, explist, inilist, X, iniAt):
         -  ``explist`` : A list of elements in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
         -  ``inilist`` : A list of lists (initial values)
         -  ``X`` : A vector (or list) of 'RBF's.
+        -  ``iniAt`` - A point (number) where initial values are defined at
 
     OUTPUT: A list of numbers
 
@@ -463,7 +467,8 @@ def evaluateSystemAtMid(sys, varlist, explist, inilist, X, iniAt):
         sage: inilist = [ini, ini]
         sage: varlist = [x1, x2, [x3, x1], [x4, x2]]
         sage: X = [RBF([3/10,5/10]), RBF([1/10,3/10]), RBF([3/10,5/10]), RBF([9/10,11/10])]
-        sage: evaluateSystemAtMid(sys, varlist, explist, inilist, point)
+        sage: iniAt = 0
+        sage: evaluateSystemAtMid(sys, varlist, explist, inilist, point, iniAt)
         [ -0.10000000000   -3.8000000000 -0.028392355047   0.77729741079]
 
     AUTHORS:
@@ -550,6 +555,7 @@ def evaluateJacobianPoint(sys, varlist, explist, inilist, point, iniAt):
         -  ``explist`` : A list of elements in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
         -  ``inilist`` : A list of lists (initial values)
         -  ``point`` : A vector (or list) of numbers
+        -  ``iniAt`` - A point (number) where initial values are defined at
 
     OUTPUT: A list of numbers
 
@@ -565,7 +571,8 @@ def evaluateJacobianPoint(sys, varlist, explist, inilist, point, iniAt):
         sage: inilist = [ini, ini]
         sage: varlist = [x1, x2, [x3, x1], [x4, x2]]
         sage: point = (4/10, 2/10, 4/10, 10/10)
-        sage: evaluateJacobianPoint(sys, varlist, explist, inilist, point)
+        sage: iniAt = 0
+        sage: evaluateJacobianPoint(sys, varlist, explist, inilist, point,iniAt)
         [                    0                     0                     1                   2/5]
         [                  4/5                   2/5                     0                     0]
         [-0.428392355046668455                     0                     1                     0]
@@ -651,6 +658,7 @@ def evaluateJacobianInterval(sys, varlist, explist, inilist, X, iniAt, targetAcc
         -  ``explist`` : A list of elements in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
         -  ``inilist`` : A list of lists (initial values)
         -  ``X`` : A vector (or list) of 'RBF's
+        -  ``iniAt`` - A point (number) where initial values are defined at
         -  ``targetAccuracy`` : A number
 
     OUTPUT: A matrix of intervals
@@ -667,8 +675,9 @@ def evaluateJacobianInterval(sys, varlist, explist, inilist, X, iniAt, targetAcc
         sage: inilist = [ini, ini]
         sage: varlist = [x1, x2, [x3, x1], [x4, x2]]
         sage: X = [RBF([3/10,5/10]), RBF([1/10,3/10]), RBF([3/10,5/10]), RBF([9/10,11/10])]
+        sage: iniAt = 0
         sage: targetAccuracy = 1e-40
-        sage: evaluateJacobianInterval(sys, varlist, explist, inilist, X, targetAccuracy)
+        sage: evaluateJacobianInterval(sys, varlist, explist, inilist, X, iniAt, targetAccuracy)
         [                0                 0  [1e+0 +/- 0.101]       [+/- 0.501]]
         [       [+/- 1.01]       [+/- 0.601]                 0                 0]
         [       [+/- 1.06]                 0                 1                 0]
@@ -758,6 +767,7 @@ def invmat(sys, varlist, explist, inilist, X, iniAt):
         -  ``explist`` : A list of elements in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
         -  ``inilist`` : A list of lists (initial values)
         -  ``X`` : A vector (or list) of 'RBF's
+        -  ``iniAt`` - A point (number) where initial values are defined at
 
     OUTPUT: A matrix of intervals
 
@@ -773,7 +783,8 @@ def invmat(sys, varlist, explist, inilist, X, iniAt):
         sage: inilist = [ini, ini]
         sage: varlist = [x1, x2, [x3, x1], [x4, x2]]
         sage: X = [RBF([3/10,5/10]), RBF([1/10,3/10]), RBF([3/10,5/10]), RBF([9/10,11/10])]
-        sage: invmat(sys, varlist, explist, inilist, X)
+        sage: iniAt = 0
+        sage: invmat(sys, varlist, explist, inilist, X, iniAt)
         [ [10.61194084185438 +/- 5.80e-16] [-11.50477422535320 +/- 3.18e-15] [-10.61194084185438 +/- 5.80e-16] [-4.244776336741752 +/- 3.02e-16]]
         [[-21.22388168370876 +/- 1.16e-15]  [25.50954845070639 +/- 3.66e-15]  [21.22388168370876 +/- 1.16e-15]  [8.489552673483503 +/- 3.98e-16]]
         [ [10.20381938028256 +/- 1.48e-15] [-11.06231555149910 +/- 2.29e-15] [-9.203819380282559 +/- 4.74e-16] [-4.081527752113023 +/- 1.23e-16]]
@@ -882,6 +893,7 @@ def krawczykoperator(sys,varlist,explist,inilist,X, iniAt, targetAccuracy):
         -  ``explist`` : A list of elements in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
         -  ``inilist`` : A list of lists (initial values)
         -  ``X`` : A vector (or list) of 'RBF's
+        -  ``iniAt`` - A point (number) where initial values are defined at
         -  ``targetAccuracy`` : A number
 
     OUTPUT: A vector of intervals
@@ -898,8 +910,9 @@ def krawczykoperator(sys,varlist,explist,inilist,X, iniAt, targetAccuracy):
         sage: inilist = [ini, ini]
         sage: varlist = [x1, x2, [x3, x1], [x4, x2]]
         sage: X = [RBF([3/10,5/10]), RBF([1/10,3/10]), RBF([3/10,5/10]), RBF([9/10,11/10])]
+        sage: iniAt = 0
         sage: targetAccuracy = 1e-40
-        sage: krawczykoperator(sys, varlist, explist, inilist, X, targetAccuracy)
+        sage: krawczykoperator(sys, varlist, explist, inilist, X, iniAt, targetAccuracy)
         [[-4e+1 +/- 1.54]]
         [ [9e+1 +/- 2.68]]
         [[-4e+1 +/- 3.06]]
@@ -965,6 +978,7 @@ def beta(sys, varlist, explist, inilist, point, iniAt):
         -  ``explist`` : A list of elements in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
         -  ``inilist`` : A list of lists (initial values)
         -  ``point`` : A vector (or list) of numbers
+        -  ``iniAt`` - A point (number) where initial values are defined at
 
     OUTPUT: A number
 
@@ -980,7 +994,8 @@ def beta(sys, varlist, explist, inilist, point, iniAt):
         sage: inilist = [ini, ini]
         sage: varlist = [x1, x2, [x3, x1], [x4, x2]]
         sage: point = (4/10, 2/10, 4/10, 10/10)
-        sage: beta(sys, varlist, explist, inilist, point)
+        sage: iniAt = 0
+        sage: beta(sys, varlist, explist, inilist, point, iniAt)
         13.532009384573664
 
     AUTHORS:
@@ -1224,7 +1239,7 @@ def deltaMatrix(sys,point):
 
 
 
-def mu(sys, varlist, explist, inilist, point):
+def mu(sys, varlist, explist, inilist, point, iniAt):
     r"""
         Computes the value of mu for ``sys`` at ``point``.
 
@@ -1235,6 +1250,7 @@ def mu(sys, varlist, explist, inilist, point):
         -  ``explist`` : A list of elements in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
         -  ``inilist`` : A list of lists (initial values)
         -  ``point`` : A vector (or list) of numbers
+        -  ``iniAt`` - A point (number) where initial values are defined at
 
     OUTPUT: A number
 
@@ -1250,7 +1266,8 @@ def mu(sys, varlist, explist, inilist, point):
         sage: inilist = [ini, ini]
         sage: varlist = [x1, x2, [x3, x1], [x4, x2]]
         sage: point = (4/10, 2/10, 4/10, 10/10)
-        sage: mu(sys, varlist, explist, inilist, point)
+        sage: iniAt = 0
+        sage: mu(sys, varlist, explist, inilist, point, iniAt)
         96.87420782217045
 
     AUTHORS:
@@ -1291,6 +1308,7 @@ def gammaValue(sys, varlist, explist, inilist, rad, point, iniAt, targetAccuracy
         -  ``inilist`` : A list of lists (initial values)
         -  ``rad`` : A number
         -  ``point`` : A vector (or list) of numbers
+        -  ``iniAt`` - A point (number) where initial values are defined at
         -  ``targetAccuracy`` : A number
 
     OUTPUT: A number
@@ -1308,8 +1326,9 @@ def gammaValue(sys, varlist, explist, inilist, rad, point, iniAt, targetAccuracy
         sage: varlist = [x1, x2, [x3, x1], [x4, x2]]
         sage: rad = 1
         sage: point = (4/10, 2/10, 4/10, 10/10)
+        sage: iniAt = 0
         sage: targetAccuracy = 1e-40
-        sage: g = gammaValue(sys, varlist, explist, inilist, rad, point, targetAccuracy)
+        sage: g = gammaValue(sys, varlist, explist, inilist, rad, point, iniAt, targetAccuracy)
         sage: g.n()
         17226.1733144475
 
@@ -1387,7 +1406,7 @@ def gammaValue(sys, varlist, explist, inilist, rad, point, iniAt, targetAccuracy
         
 
     # 7. using 'mu' and information obtained from above, compute 'gamma' value and return it.
-    return mu(sys,varlist,explist,inilist,point)*(sqrt(d^3)/(2*pointnorm(point))+sum(mlist))
+    return mu(sys,varlist,explist,inilist,point,iniAt)*(sqrt(d^3)/(2*pointnorm(point))+sum(mlist))
 
 
 

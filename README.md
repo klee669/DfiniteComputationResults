@@ -1,11 +1,32 @@
 ### Software Requirements ###
 
-* Install sage:
+* Install SageMath:
   * 8.2 version (released on 2018-05-05) is needed. (http://www.sagemath.org/)
 
 * Install ore_algebra: follow the instructions in http://www.kauers.de/software.html
 
+
+
 ### How to Run Codes ###
+
+* go to 'code' folder.
+
+* run SageMath using the command line
+
+```
+~/Downloads/SageMath/sage
+```
+
+* When SageMath is running, load the script. For example
+```
+load("D-finite-core.sage")
+```
+
+
+* Instructions for codes and functions are available in 'D-finite-core.sage' file. Users can construct their examples and test them.
+
+
+### How to Example Scripts ###
 
 * go to 'code/examples' folder.
 
