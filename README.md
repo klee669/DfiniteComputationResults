@@ -52,5 +52,5 @@ load("expExample.sage")
      * mixed-2equations.sage : computes gamma value using maximum value of a Bessel function and an error function.(example in section 5.2)
      * expExample.sage : comparison between 'alphaCertified' on the system with an exponential function.(example in section 5.3)
      * ellipseExp-alpha.sage : maximization problem with two ellipses certified by alpha theory (example in section 5.4)
-     * ellipseExp-Krawczyk.sage : maximization problem with two ellipses certified by Krawczyk mehtod (example in section 5.4)
+     * ellipseExp-Krawczyk.sage : maximization problem with two ellipses certified by Krawczyk method (example in section 5.4)
 
