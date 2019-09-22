@@ -36,135 +36,6 @@ from ore_algebra import OreAlgebra
 
 
 
-def iniForDeri(expression, ini, iniAt):
-    r"""
-        Computes the initial values for the derivative of D-finite functions.
-
-    INPUT:
-
-        -  ``expression`` - An element in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
-        -  ``ini`` - A list of numbers
-        -  ``iniAt`` - A point (number) where 'ini' is defined at
-
-    OUTPUT: A list of numbers
-
-    EXAMPLES::
-
-        sage: import math
-        sage: from ore_algebra import OreAlgebra
-        sage: Pols.<x> = PolynomialRing(QQ) ; Dops.<Dx> =  OreAlgebra(Pols)
-        sage: iniForDeri(Dx^2 + 2*x*Dx, [0,2/sqrt(pi)],0)
-        [2/sqrt(pi), 0]  ### an initial condition for 'Dx^2 + 2*x*Dx + 2'.
-
-    AUTHORS:
-    
-        - Kisun Lee klee669@gatech.edu (2018-08-21)
-
-    SEEALSO::
-
-        :func:evaluateJacobianInterval
-        :func:invmat
-        :func:gammaVaue
-    
-
-    """
-
-    # 1. extract the information about expression. (degree, leading term)
-    degOfExp = order(expression)
-    A.<x> = PolynomialRing(QQ)
-    leadingTerm = A(expression.coefficients()[-1])
-
-
-    # 2. make the list of initial values for the derivative.
-    # set 'derivativeIni = ini'
-    derivativeIni = []
-    for i in range(0, len(ini)):
-        derivativeIni.append(ini[i])
-
-    # 3. If there is no root on the 'leadingTerm' (D-finite function has no singularity)  compute the new initial value using previous initial values.
-    if leadingTerm.subs(x=iniAt) != 0:
-        derive = leadingTerm * (Dx ** degOfExp) - expression
-        deriveCoefflist = derive.coefficients(sparse=false)
-        newInitialValue = 0
-        for i in range(0, len(deriveCoefflist)):
-            newInitialValue = newInitialValue + (1/leadingTerm.subs(x=iniAt)) * derivativeIni[i] * deriveCoefflist[i].subs(x=iniAt)
-        derivativeIni.append(newInitialValue)
-        derivativeIni = derivativeIni[1:]
-
-
-    # 4. If the input  D-finite function has 'regular singular points', then use local basis to compute the asymptotic behavior of the function.
-    else:
-        localBasis = expression.local_basis_monomials(0)
-        for i in range(0, len(localBasis)):
-            derivativeIni[i] = derivativeIni[i] * diff(localBasis[i]).subs(x=1)
-    return derivativeIni
-
-
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
-
-def expForDeri(expression):
-    r"""
-        Computes the recursive expression for the derivative of D-finite functions
-
-    INPUT:
-
-        -  ``expression`` - An element in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
-
-    OUTPUT: An element in univariate Ore algebra in 'Dx' over univariate polynomial ring in 'x' over rational field
-
-    EXAMPLES::
-
-        sage: import math
-        sage: from ore_algebra import OreAlgebra
-        sage: Pols.<x> = PolynomialRing(QQ) ; Dops.<Dx> =  OreAlgebra(Pols)
-        sage: expForDeri(Dx^2 + 2*x*Dx)
-        Dx^2 + 2*x*Dx + 2
-
-    AUTHORS:
-    
-        - Kisun Lee klee669@gatech.edu (2018-08-21)
-
-    SEEALSO::
-
-        :func:iniForDeri
-        :func:evaluateJacobianInterval
-        :func:invmat
-        :func:gammaValue
-    
-
-    """
-
-    
-    # 1. When the given expression has no constant term, then it is simple.
-    # It is enough to divide by Dx from the left.
-    coefflist = expression.coefficients(sparse=False)
-    constTerm = coefflist[0]
-    A.<x> = PolynomialRing(QQ)
-    Aops.<Dx> = OreAlgebra(A)
-    if constTerm == 0:
-        return Aops(Dx * expression/Dx)
-
-    # 2. When the expression has nonzero constant term, then 'Dx*exp*constTerm - (constTerm)'*exp' gives an expression for the derivative.
-    # i.e., Let 'p_r * f^(r) + ... + p_1 * f' + p_0 * f = 0'. Then,
-    # Dx * expression = p_r * f^(r+1) + (p'_r + p_{r-1}) * f^(r) + ... + (p'_1 + p_0) * f' + p'_0 * f.
-    # Therefore, in order to eliminate f-term, we should consider the following.
-    else:
-        expressionForDeri = constTerm * (Dx*expression) - diff(constTerm) * expression
-        leadingTerm = A(expressionForDeri.coefficients()[-1])
-        if leadingTerm.degree() == 0:
-            return Aops(A((1/leadingTerm)) * expressionForDeri/Dx)
-        else:
-            return Aops(expressionForDeri/Dx)
-
-
-
-
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 
 
@@ -627,7 +498,8 @@ def evaluateJacobianPoint(sys, varlist, explist, inilist, point, iniAt):
     for i in range(0, len(explist)):
         evaluateAt = point[position(variablesForSystem, variablesForDfinite[i][1])]
 #        dFinitevaluesAtPoint = (expForDeri(explist[i])).numerical_solution(iniForDeri(explist[i],inilist[i]),[0,evaluateAt])
-        dFinitevaluesAtPoint = (expForDeri(explist[i])).numerical_solution(iniForDeri(explist[i],inilist[i],iniAt),[iniAt,evaluateAt])
+#        dFinitevaluesAtPoint = (expForDeri(explist[i])).numerical_solution(iniForDeri(explist[i],inilist[i],iniAt),[iniAt,evaluateAt])
+        dFinitevaluesAtPoint = explist[i].numerical_solution(inilist[i],[iniAt,evaluateAt],post_transform=Dx)
         valueList.append(CBF(dFinitevaluesAtPoint).real().mid()) # should convert values into 'CBF'. (Operations don't support between CBF and numbers)
 
     
@@ -735,11 +607,11 @@ def evaluateJacobianInterval(sys, varlist, explist, inilist, X, iniAt, targetAcc
     # 'numerical_solution' evaluates the derivative of D-finite functions with accuracy 'targetAccuracy'.
     # for-loop makes computes the bound for D-finite functions in 'sys'.
     for i in range(0, len(explist)):
-        derivativeExpression = expForDeri(explist[i])
-        derivativeInitialValues = iniForDeri(explist[i], inilist[i],iniAt)
+#        derivativeExpression = expForDeri(explist[i])
+#        derivativeInitialValues = iniForDeri(explist[i], inilist[i],iniAt)
         evaluateAt = X[position(variablesForSystem, variablesForDfinite[i][1])]
 #        valueList.append((derivativeExpression).numerical_solution(derivativeInitialValues, [0, evaluateAt], targetAccuracy))
-        valueList.append((derivativeExpression).numerical_solution(derivativeInitialValues, [iniAt, evaluateAt], targetAccuracy))
+        valueList.append(explist[i].numerical_solution(inilist[i], [iniAt, evaluateAt], targetAccuracy,post_transform=Dx))
 
 
     # 8. This part evaluates 'sys' over 'valueList'.
@@ -842,10 +714,10 @@ def invmat(sys, varlist, explist, inilist, X, iniAt):
     # 7. Evaluate the derivative of D-finite functions at 'm(X)', and put them into 'valueList'.
     for i in range(0, len(explist)):
         evaluateAt = (X[position(variablesForSystem, variablesForDfinite[i][1])]).mid()
-        derivativeExpression = expForDeri(explist[i])
-        derivativeInitialValues = iniForDeri(explist[i],inilist[i], iniAt)
+#        derivativeExpression = expForDeri(explist[i])
+#        derivativeInitialValues = iniForDeri(explist[i],inilist[i], iniAt)
 #        valueList.append(CBF(derivativeExpression.numerical_solution(derivativeInitialValues,[0,evaluateAt])).real().mid())
-        valueList.append(CBF(derivativeExpression.numerical_solution(derivativeInitialValues,[iniAt,evaluateAt])).real().mid())
+        valueList.append(CBF(explist[i].numerical_solution(inilist[i],[iniAt,evaluateAt],post_transform=Dx)).real().mid())
     for i in range(0, len(valueList)):
         jac = jac.subs({variablesForSystem[i] : valueList[i]})
         
@@ -1382,29 +1254,36 @@ def gammaValue(sys, varlist, explist, inilist, rad, point, iniAt, targetAccuracy
 
         # bound for D-finite function (no differentiation)
 #        boundInterval0 = (explist[i].numerical_solution(inilist[i], [0, CBF(circleCover)],targetAccuracy))
+#        boundInterval0 = (explist[i].numerical_solution(inilist[i], [iniAt, CBF(circleCover)],targetAccuracy))
         boundInterval0 = (explist[i].numerical_solution(inilist[i], [iniAt, CBF(circleCover)],targetAccuracy))
         upperbound0 = sqrt(max(abs(boundInterval0.real().upper()), abs(boundInterval0.real().lower()))^2 + max(abs(boundInterval0.imag().upper()), abs(boundInterval0.imag().lower()))^2)
+#        upperbound0 = sqrt(max(abs(boundInterval0.upper()), abs(boundInterval0.lower()))^2 + max(abs(boundInterval0.upper()), abs(boundInterval0.lower()))^2)
 
 
         # bound for the derivative
-        derivativeExpression = expForDeri(explist[i])
-        derivativeInitialValues = iniForDeri(explist[i],inilist[i],iniAt)
+#        derivativeExpression = expForDeri(explist[i])
+#        derivativeInitialValues = iniForDeri(explist[i],inilist[i],iniAt)
 #        boundInterval1 = ((derivativeExpression).numerical_solution(derivativeInitialValues, [0, CBF(circleCover)]))
-        boundInterval1 = ((derivativeExpression).numerical_solution(derivativeInitialValues, [iniAt, CBF(circleCover)]))
+#        boundInterval1 = ((derivativeExpression).numerical_solution(derivativeInitialValues, [iniAt, CBF(circleCover)]))
+        boundInterval1 = (explist[i].numerical_solution(inilist[i], [iniAt, CBF(circleCover)],post_transform=Dx))
+#        boundInterval1 = (explist[i].numerical_solution(inilist[i], [iniAt, evaluateAt],post_transform=Dx))
         upperbound1 = sqrt(max(abs(boundInterval1.real().upper()), abs(boundInterval1.real().lower()))^2 + max(abs(boundInterval1.imag().upper()), abs(boundInterval1.imag().lower()))^2)
+#        upperbound1 = sqrt(max(abs(boundInterval1.upper()), abs(boundInterval1.lower()))^2 + max(abs(boundInterval1.upper()), abs(boundInterval1.lower()))^2)
 
 
         # bound for the second derivative
-        secondDerivativeExpression = expForDeri(derivativeExpression)
-        secondDerivativeInitialValues = iniForDeri(derivativeExpression, derivativeInitialValues, iniAt)
+#        secondDerivativeExpression = expForDeri(derivativeExpression)
+#        secondDerivativeInitialValues = iniForDeri(derivativeExpression, derivativeInitialValues, iniAt)
 #        boundInterval2 = ((secondDerivativeExpression).numerical_solution(secondDerivativeInitialValues, [0, CBF(circleCover)]))
-        boundInterval2 = ((secondDerivativeExpression).numerical_solution(secondDerivativeInitialValues, [iniAt, CBF(circleCover)]))
+#        boundInterval2 = ((secondDerivativeExpression).numerical_solution(secondDerivativeInitialValues, [iniAt, CBF(circleCover)]))
+        boundInterval2 = (explist[i].numerical_solution(inilist[i], [iniAt, CBF(circleCover)],post_transform=Dx^2))
+#        boundInterval2 = (explist[i].numerical_solution(inilist[i], [iniAt, evaluateAt],post_transform=Dx^2))
         upperbound2 = sqrt(max(abs(boundInterval2.real().upper()), abs(boundInterval2.real().lower()))^2 + max(abs(boundInterval2.imag().upper()), abs(boundInterval2.imag().lower()))^2)
+#        upperbound2 = sqrt(max(abs(boundInterval2.upper()), abs(boundInterval2.lower()))^2 + max(abs(boundInterval2.upper()), abs(boundInterval2.lower()))^2)
 
         
         mlist.append(min(max([1,upperbound0/rad]),max([1,upperbound1/2]),max([1,upperbound2 * rad/2]))/(rad))
         
-
     # 7. using 'mu' and information obtained from above, compute 'gamma' value and return it.
     return mu(sys,varlist,explist,inilist,point,iniAt)*(sqrt(d^3)/(2*pointnorm(point))+sum(mlist))
 
