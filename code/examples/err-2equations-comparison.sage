@@ -42,7 +42,7 @@ ini = [0, 2/sqrt(pi)]
 inilist = [ini, ini]
 iniAt = 0
 
-rad = 0.04
+rad = 0.4
 
 
 
@@ -56,20 +56,20 @@ interval5 = [RBF(RealInterval(0.49,0.47)),RBF(RealInterval(1.95,1.93)),RBF(RealI
 interval6 = [RBF(RealInterval(0.4,0.6)),RBF(RealInterval(1.8,2)),RBF(RealInterval(0.4,0.6)),RBF(RealInterval(0.9,1.1))]
 interval7 = [RBF(RealInterval(0,2)),RBF(RealInterval(1,3)),RBF(RealInterval(0,2)),RBF(RealInterval(0,2))]
 interval = [interval1, interval2, interval3, interval4, interval5, interval6, interval7]
+
 k1 = krawczykoperator(sys, varlist, explist, inilist, interval[0],iniAt, 1e-40)
 k2 = krawczykoperator(sys, varlist, explist, inilist, interval[1],iniAt, 1e-40)
 k3 = krawczykoperator(sys, varlist, explist, inilist, interval[2],iniAt, 1e-40)
 k4 = krawczykoperator(sys, varlist, explist, inilist, interval[3],iniAt, 1e-40)
 k5 = krawczykoperator(sys, varlist, explist, inilist, interval[4],iniAt, 1e-40)
-#k6 = krawczykoperator(sys, varlist, explist, inilist, interval[5],iniAt, 1e-40)
-#print 2
-#k7 = krawczykoperator(sys, varlist, explist, inilist, interval[6],iniAt, 1e-40)
-k = [k1,k2,k3,k4,k5]
+k6 = krawczykoperator(sys, varlist, explist, inilist, interval[5],iniAt, 1e-40)
+k7 = krawczykoperator(sys, varlist, explist, inilist, interval[6],iniAt, 1e-40)
+k = [k1,k2,k3,k4,k5,k6,k7]
 
 
 print ("This example compares Krawczyk method and alpha theory based tests on different accuracies")
 print ("alpha theory-based test runs over the radius r =" + rad.__repr__())
-print table([(5-i, k[i][0][0].endpoints()[0]>interval[i][0].endpoints()[0] and k[i][0][0].endpoints()[1]<interval[i][0].endpoints()[1]
+print table([(7-i, k[i][0][0].endpoints()[0]>interval[i][0].endpoints()[0] and k[i][0][0].endpoints()[1]<interval[i][0].endpoints()[1]
               and k[i][1][0].endpoints()[0]>interval[i][1].endpoints()[0] and k[i][1][0].endpoints()[1]<interval[i][1].endpoints()[1]
               and k[i][2][0].endpoints()[0]>interval[i][2].endpoints()[0] and k[i][2][0].endpoints()[1]<interval[i][2].endpoints()[1]
-              and k[i][3][0].endpoints()[0]>interval[i][3].endpoints()[0] and k[i][3][0].endpoints()[1]<interval[i][3].endpoints()[1],(beta(sys, varlist, explist, inilist, point[i],iniAt) * gammaValue(sys,varlist,explist,inilist,rad, point[i],iniAt,1e-40)).n() < ((13-3*sqrt(17))/4).n())  for i in [0..4]], header_row=["decimal places", r"krawczyk",r"alpha"], frame=True)
+              and k[i][3][0].endpoints()[0]>interval[i][3].endpoints()[0] and k[i][3][0].endpoints()[1]<interval[i][3].endpoints()[1],(beta(sys, varlist, explist, inilist, point[i],iniAt) * gammaValue(sys,varlist,explist,inilist,rad, point[i],iniAt,1e-40)).n() < ((13-3*sqrt(17))/4).n())  for i in [0..6]], header_row=["decimal places", r"krawczyk",r"alpha"], frame=True)

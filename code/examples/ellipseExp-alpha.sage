@@ -41,6 +41,6 @@ b = beta(sys, varlist, explist, inilist, point, iniAt)
 
 
 print("This example shows the result of alpha theory-based test certification on the maximization problem about two ellipses")
-print("The radius is = 0.005")
-print table([(point,i*0.01,b*(gammaValue(sys,varlist,explist,inilist,i*0.005, point, iniAt, 1e-40)).n()) for i in range(1,2)], header_row=["point",r"radius", r"alpha"], frame=True)
+print("The radius is = 0.01")
+print table([(point,i*0.01,b*(gammaValue(sys,varlist,explist,inilist,i*0.01, point, iniAt, 1e-40)).n()) for i in range(1,2)], header_row=["point",r"radius", r"alpha"], frame=True)
 
