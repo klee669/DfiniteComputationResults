@@ -87,7 +87,7 @@ def iniForDeri(expression, ini, iniAt):
         deriveCoefflist = derive.coefficients(sparse=false)
         newInitialValue = 0
         for i in range(0, len(deriveCoefflist)):
-            newInitialValue = newInitialValue + (1/leadingTerm.subs(x=iniAt)) * derivativeIni[i] * deriveCoefflist[i].subs(x=iniAt)
+            newInitialValue = newInitialValue + (1//leadingTerm.subs(x=iniAt)) * derivativeIni[i] * deriveCoefflist[i].subs(x=iniAt)
         derivativeIni.append(newInitialValue)
         derivativeIni = derivativeIni[1:]
 
@@ -145,7 +145,7 @@ def expForDeri(expression):
     A.<x> = PolynomialRing(QQ)
     Aops.<Dx> = OreAlgebra(A)
     if constTerm == 0:
-        return Aops(Dx * expression/Dx)
+        return Aops(Dx * expression//Dx)
 
     # 2. When the expression has nonzero constant term, then 'Dx*exp*constTerm - (constTerm)'*exp' gives an expression for the derivative.
     # i.e., Let 'p_r * f^(r) + ... + p_1 * f' + p_0 * f = 0'. Then,
@@ -155,9 +155,9 @@ def expForDeri(expression):
         expressionForDeri = constTerm * (Dx*expression) - diff(constTerm) * expression
         leadingTerm = A(expressionForDeri.coefficients()[-1])
         if leadingTerm.degree() == 0:
-            return Aops(A((1/leadingTerm)) * expressionForDeri/Dx)
+            return Aops(A((1//leadingTerm)) * expressionForDeri//Dx)
         else:
-            return Aops(expressionForDeri/Dx)
+            return Aops(expressionForDeri//Dx)
 
 
 

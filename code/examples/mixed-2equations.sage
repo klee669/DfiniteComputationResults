@@ -41,6 +41,7 @@ b = beta(sys, varlist, explist, inilist, point, iniAt)
 
 print ("This example runs alpha theory-based test on the system with error function and Bessel function over different radii")
 print ("The radius of convergence of the Bessel function is " + RR(regularSingularPoints[4]).__repr__())
-print table([(i*0.1,gammaValue(sys,varlist,explist,inilist,i*0.1*regularSingularPoints[4], point,iniAt,1e-40).n(),(b * gammaValue(sys,varlist,explist,inilist,i*0.1*regularSingularPoints[4], point,iniAt,1e-40)).n()) for i in [0.00001, 0.0001,0.001,0.01,0.1,0.3]], header_row=["radius", r"gamma",r"alpha"], frame=True)
+print table([(i*0.1,gammaValue(sys,varlist,explist,inilist,i*0.1*regularSingularPoints[4], point,iniAt,1e-40).n(),(b * gammaValue(sys,varlist,explist,inilist,i*0.1*regularSingularPoints[4], point,iniAt,1e-40)).n()) for i in [0.00001, 0.0001,0.001,0.01]], header_row=["radius", r"gamma",r"alpha"], frame=True)
 
+# i = 0.1 and 0.3 doesn't work due to updates in D-finite package.
 
